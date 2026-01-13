@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>倉位塑膠箱換算工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #f3f4f6; font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-2xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-blue-700">📦 倉位塑膠箱換算工具</h1>
+            <p class="text-gray-500 mt-2">輸入倉位才數，快速計算可領取的箱子組合</p>
+        </header>
+
+        <!-- 第一步：輸入總才數 -->
+        <div class="card p-6 mb-6">
+            <label class="block text-lg font-semibold mb-2">1. 請輸入倉位總才數 (cai)</label>
+            <div class="flex gap-4">
+                <input type="number" id="totalCapacity" value="100" class="w-full p-3 border rounded-lg text-xl focus:ring-2 focus:ring-blue-500 outline-none" placeholder="例如: 100">
+                <div class="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg flex items-center font-bold">才</div>
+            </div>
+        </div>
+
+        <!-- 第二步：規則顯示與上限 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="card p-4 text-center border-t-4 border-blue-500">
+                <div class="text-gray-500 text-sm">大型箱 (20才)</div>
+                <div id="maxL" class="text-2xl font-bold text-blue-600">--</div>
+                <div class="text-xs text-gray-400">實體上限: 15個</div>
+            </div>
+            <div class="card p-4 text-center border-t-4 border-green-500">
+                <div class="text-gray-500 text-sm">中型箱 (10才)</div>
+                <div id="maxM" class="text-2xl font-bold text-green-600">--</div>
+                <div class="text-xs text-gray-400">實體上限: 30個</div>
+            </div>
+            <div class="card p-4 text-center border-t-4 border-orange-500">
+                <div class="text-gray-500 text-sm">小型箱 (5才)</div>
+                <div id="maxS" class="text-2xl font-bold text-orange-600">--</div>
+                <div class="text-xs text-gray-400">實體上限: 15個</div>
+            </div>
+        </div>
+
+        <!-- 第三步：自由配 -->
+        <div class="card p-6">
+            <h2 class="text-lg font-semibold mb-4 text-gray-700">2. 自定義組合試算</h2>
+            
+            <div class="space-y-6">
+                <!-- 大 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="font-bold">大型 (L)</span>
+                        <p class="text-xs text-gray-400">20才/個</p>
+                    </div>
+                    <input type="number" id="inputL" value="0" min="0" class="w-24 p-2 border rounded text-center">
+                </div>
+                <!-- 中 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="font-bold text-green-700">中型 (M)</span>
+                        <p class="text-xs text-gray-400">10才/個</p>
+                    </div>
+                    <input type="number" id="inputM" value="0" min="0" class="w-24 p-2 border rounded text-center">
+                </div>
+                <!-- 小 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="font-bold text-orange-700">小型 (S)</span>
+                        <p class="text-xs text-gray-400">5才/個</p>
+                    </div>
+                    <input type="number" id="inputS" value="0" min="0" class="w-24 p-2 border rounded text-center">
+                </div>
+            </div>
+
+            <hr class="my-6">
+
+            <!-- 結果顯示 -->
+            <div id="resultCard" class="p-4 rounded-lg text-center transition-colors">
+                <div class="text-sm">當前已用才數</div>
+                <div id="usedCai" class="text-3xl font-black">0</div>
+                <div id="statusText" class="mt-2 font-bold"></div>
+            </div>
+            
+            <div id="limitWarnings" class="mt-4 space-y-1"></div>
+        </div>
+
+        <div class="mt-6 text-sm text-gray-500 bg-white p-4 rounded-lg">
+            <strong>換算規則說明：</strong>
+            <ul class="list-disc ml-5 mt-2">
+                <li>1個大型(20才) = 2個中型(10才) = 4個小型(5才)</li>
+                <li>領取數量受「倉位才數」與「各箱型實體數量上限」雙重限制。</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const config = {
+            L: { cai: 20, limit: 15 },
+            M: { cai: 10, limit: 30 },
+            S: { cai: 5, limit: 15 }
+        };
+
+        const totalInput = document.getElementById('totalCapacity');
+        const inputL = document.getElementById('inputL');
+        const inputM = document.getElementById('inputM');
+        const inputS = document.getElementById('inputS');
+
+        function calculate() {
+            const total = parseFloat(totalInput.value) || 0;
+            
+            // 1. 計算純領取的物理上限
+            // 公式：取 (才數/單個才數) 與 (實體上限) 的最小值
+            const maxL = Math.min(Math.floor(total / config.L.cai), config.L.limit);
+            const maxM = Math.min(Math.floor(total / config.M.cai), config.M.limit);
+            const maxS = Math.min(Math.floor(total / config.S.cai), config.S.limit);
+
+            document.getElementById('maxL').innerText = maxL + ' 個';
+            document.getElementById('maxM').innerText = maxM + ' 個';
+            document.getElementById('maxS').innerText = maxS + ' 個';
+
+            // 2. 計算目前組合
+            const valL = parseInt(inputL.value) || 0;
+            const valM = parseInt(inputM.value) || 0;
+            const valS = parseInt(inputS.value) || 0;
+
+            const used = (valL * config.L.cai) + (valM * config.M.cai) + (valS * config.S.cai);
+            
+            const usedCaiEl = document.getElementById('usedCai');
+            const resultCard = document.getElementById('resultCard');
+            const statusText = document.getElementById('statusText');
+            const warnings = document.getElementById('limitWarnings');
+
+            usedCaiEl.innerText = `${used} / ${total} 才`;
+            warnings.innerHTML = '';
+
+            // 檢查是否超過總才數
+            let isOver = used > total;
+            
+            // 檢查是否超過個別數量上限
+            if (valL > config.L.limit) { addWarning('大型箱超過 15 個上限'); isOver = true; }
+            if (valM > config.M.limit) { addWarning('中型箱超過 30 個上限'); isOver = true; }
+            if (valS > config.S.limit) { addWarning('小型箱超過 15 個上限'); isOver = true; }
+
+            if (isOver) {
+                resultCard.className = 'p-4 rounded-lg text-center bg-red-100 text-red-700';
+                statusText.innerText = '⚠️ 超過領取上限';
+            } else {
+                resultCard.className = 'p-4 rounded-lg text-center bg-green-100 text-green-700';
+                statusText.innerText = '✅ 組合符合規則';
+            }
+        }
+
+        function addWarning(msg) {
+            const div = document.createElement('div');
+            div.className = 'text-xs text-red-500 font-bold';
+            div.innerText = '• ' + msg;
+            document.getElementById('limitWarnings').appendChild(div);
+        }
+
+        [totalInput, inputL, inputM, inputS].forEach(el => {
+            el.addEventListener('input', calculate);
+        });
+
+        // 初始化
+        calculate();
+    </script>
+</body>
+</html>
