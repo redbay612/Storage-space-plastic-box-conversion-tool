@@ -21,27 +21,27 @@
             <h2 class="text-xl font-bold text-slate-700 mb-6 flex items-center tracking-tight">1. 設定倉位空間</h2>
             <div class="relative">
                 <input type="number" id="totalCapacity" value="300" class="w-full p-5 border-2 border-slate-100 rounded-2xl text-4xl font-black text-slate-800 focus:border-blue-500 outline-none transition-all">
-                <span class="absolute right-6 top-6 text-slate-300 text-xl font-bold">才</span>
+                <span class="absolute right-6 top-6 text-slate-300 text-xl font-bold">材</span>
             </div>
-            <p class="text-slate-400 text-sm mt-4 font-medium italic">輸入倉位總才數後，系統將按「20才換1大箱 / 10才換1中箱 / 5才換1小箱」比例自動換算上限。</p>
+            <p class="text-slate-400 text-sm mt-4 font-medium italic">輸入倉位總材數後，系統將按比例自動換算上限。</p>
         </section>
 
         <!-- 步驟 1: 自動換算上限 -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 text-center font-sans">
             <div class="card p-5 border-l-4 border-blue-500">
-                <div class="text-blue-500 font-bold text-sm">大型箱 (4.5才)</div>
+                <div class="text-blue-500 font-bold text-sm">大塑膠箱 (4.5材)</div>
                 <div class="text-[10px] text-slate-400 mb-2 font-bold tracking-widest">單價: $300 | 限制: 15個</div>
                 <div id="autoMaxL" class="text-3xl font-black text-slate-700">-- 個</div>
                 <div class="text-[10px] text-slate-400 mt-2 uppercase font-bold tracking-widest opacity-60">最大領取上限</div>
             </div>
             <div class="card p-5 border-l-4 border-green-500">
-                <div class="text-green-500 font-bold text-sm">中型箱 (2.1才)</div>
+                <div class="text-green-500 font-bold text-sm">中塑膠箱 (2.1材)</div>
                 <div class="text-[10px] text-slate-400 mb-2 font-bold tracking-widest">單價: $250 | 限制: 30個</div>
                 <div id="autoMaxM" class="text-3xl font-black text-slate-700">-- 個</div>
                 <div class="text-[10px] text-slate-400 mt-2 uppercase font-bold tracking-widest opacity-60">最大領取上限</div>
             </div>
             <div class="card p-5 border-l-4 border-orange-500">
-                <div class="text-orange-500 font-bold text-sm">小型箱 (0.7才)</div>
+                <div class="text-orange-500 font-bold text-sm">小塑膠箱 (0.7材)</div>
                 <div class="text-[10px] text-slate-400 mb-2 font-bold tracking-widest">單價: $150 | 限制: 15個</div>
                 <div id="autoMaxS" class="text-3xl font-black text-slate-700">-- 個</div>
                 <div class="text-[10px] text-slate-400 mt-2 uppercase font-bold tracking-widest opacity-60">最大領取上限</div>
@@ -55,8 +55,8 @@
                 <!-- 大 -->
                 <div class="flex items-center justify-between group">
                     <div class="flex-1">
-                        <div class="font-bold text-slate-700 text-lg">大型箱 (L)</div>
-                        <div class="text-[10px] text-slate-400 font-mono italic tracking-wide">66x51x38 cm (<span class="text-blue-400 font-bold">4.5才</span>)</div>
+                        <div class="font-bold text-slate-700 text-lg">大塑膠箱</div>
+                        <div class="text-[10px] text-slate-400 font-mono italic tracking-wide">66x51x38 cm (<span class="text-blue-400 font-bold">4.5材</span>)</div>
                     </div>
                     <div class="flex items-center gap-4">
                         <input type="number" id="inputL" value="0" min="0" class="w-20 p-3 border-2 border-slate-50 rounded-xl text-center font-black text-blue-600 focus:border-blue-400 outline-none transition-all">
@@ -68,8 +68,8 @@
                 <!-- 中 -->
                 <div class="flex items-center justify-between group">
                     <div class="flex-1">
-                        <div class="font-bold text-slate-700 text-lg">中型箱 (M)</div>
-                        <div class="text-[10px] text-slate-400 font-mono italic tracking-wide">53x38x30 cm (<span class="text-green-400 font-bold">2.1才</span>)</div>
+                        <div class="font-bold text-slate-700 text-lg">中塑膠箱</div>
+                        <div class="text-[10px] text-slate-400 font-mono italic tracking-wide">53x38x30 cm (<span class="text-green-400 font-bold">2.1材</span>)</div>
                     </div>
                     <div class="flex items-center gap-4">
                         <input type="number" id="inputM" value="0" min="0" class="w-20 p-3 border-2 border-slate-50 rounded-xl text-center font-black text-green-600 focus:border-green-400 outline-none transition-all">
@@ -81,8 +81,8 @@
                 <!-- 小 -->
                 <div class="flex items-center justify-between group">
                     <div class="flex-1">
-                        <div class="font-bold text-slate-700 text-lg">小型箱 (S)</div>
-                        <div class="text-[10px] text-slate-400 font-mono italic tracking-wide">38x26x20 cm (<span class="text-orange-400 font-bold">0.7才</span>)</div>
+                        <div class="font-bold text-slate-700 text-lg">小塑膠箱</div>
+                        <div class="text-[10px] text-slate-400 font-mono italic tracking-wide">38x26x20 cm (<span class="text-orange-400 font-bold">0.7材</span>)</div>
                     </div>
                     <div class="flex items-center gap-4">
                         <input type="number" id="inputS" value="0" min="0" class="w-20 p-3 border-2 border-slate-50 rounded-xl text-center font-black text-orange-600 focus:border-orange-400 outline-none transition-all">
@@ -99,7 +99,7 @@
                 <div class="text-center md:text-left">
                     <div class="text-[10px] text-slate-400 font-black tracking-widest mb-1 uppercase">總計消耗材積比例</div>
                     <div class="text-4xl font-black text-slate-800">
-                        <span id="finalUsed">0</span> <span class="text-lg text-slate-300 font-normal">/ <span id="finalMax">300</span> 才</span>
+                        <span id="finalUsed">0</span> <span class="text-lg text-slate-300 font-normal">/ <span id="finalMax">300</span> 材</span>
                     </div>
                 </div>
                 <div class="hidden md:block h-16 w-px bg-slate-100"></div>
@@ -118,15 +118,15 @@
                 📋 換算與限制規則說明
             </h3>
             <ul class="space-y-3 opacity-90 text-slate-300">
-                <li>• <span class="text-slate-100 font-bold">規格：</span>大型(4.5才, $300) | 中型(2.1才, $250) | 小型(0.7才, $150)</li>
-                <li>• <span class="text-slate-100 font-bold">單一倉位實體數量上限：</span>大型 15 個、中型 30 個、小型 15 個。</li>
-                <li>• <span class="text-slate-100 font-bold">換算比例：</span>1大箱空間 = 2中箱空間 = 4小箱空間</li>
-                <li>• <span class="text-slate-100 font-bold">換算邏輯：</span>步驟 1 顯示單一規格最大值。步驟 2 組合需滿足「總消耗材積比例 ≤ 倉位才數」且「各項不超過數量上限」。</li>
+                <li>• <span class="text-slate-100 font-bold">規格：</span>大塑膠箱(<span class="text-slate-100">4.5材</span>, $300) | 中塑膠箱(<span class="text-slate-100">2.1材</span>, $250) | 小塑膠箱(<span class="text-slate-100">0.7材</span>, $150)</li>
+                <li>• <span class="text-slate-100 font-bold">單一倉位實體數量上限：</span>大塑膠箱 15 個、中塑膠箱 30 個、小塑膠箱 15 個。</li>
+                <li>• <span class="text-slate-100 font-bold">換算比例：</span>1大塑膠箱空間 = 2中塑膠箱空間 = 4小塑膠箱空間</li>
+                <li>• <span class="text-slate-100 font-bold">換算邏輯：</span>步驟 1 顯示單一規格最大值。步驟 2 組合需滿足「總消耗材積比例 ≤ 倉位材數」且「各項不超過數量上限」。</li>
                 <li class="bg-slate-700/50 p-3 rounded-lg border-l-4 border-blue-500 text-slate-200">
                     <span class="font-bold text-blue-400">空間對應基準：</span><br>
-                    每 <span class="font-black text-white">20材</span> 空間可換 <span class="font-bold text-white">1大箱</span>、
-                    <span class="font-black text-white">10材</span> 可換 <span class="font-bold text-white">1中箱</span>、
-                    <span class="font-black text-white">5材</span> 可換 <span class="font-bold text-white">1小箱</span>
+                    每 <span class="font-black text-white">20材</span> 空間可換 <span class="font-bold text-white">1大塑膠箱</span>、
+                    <span class="font-black text-white">10材</span> 可換 <span class="font-bold text-white">1中塑膠箱</span>、
+                    <span class="font-black text-white">5材</span> 可換 <span class="font-bold text-white">1小塑膠箱</span>
                 </li>
             </ul>
         </footer>
@@ -164,18 +164,16 @@
             const capacity = parseFloat(dom.cap.value) || 0;
             dom.resMax.innerText = capacity;
 
-            // 步驟 1: 自動換算各項單獨領取之上限
-            // 邏輯：(總才數 / 對應重量空間) 與 (硬性數量限制) 取較小值
+            // 步驟 1: 自動換算上限
             dom.autoL.innerText = Math.min(Math.floor(capacity / CONFIG.L.weightCai), CONFIG.L.limit) + ' 個';
             dom.autoM.innerText = Math.min(Math.floor(capacity / CONFIG.M.weightCai), CONFIG.M.limit) + ' 個';
             dom.autoS.innerText = Math.min(Math.floor(capacity / CONFIG.S.weightCai), CONFIG.S.limit) + ' 個';
 
-            // 步驟 2: 混合領取計算
+            // 步驟 2: 計算
             const vL = parseInt(dom.inL.value) || 0;
             const vM = parseInt(dom.inM.value) || 0;
             const vS = parseInt(dom.inS.value) || 0;
 
-            // 1. 金額統計
             const costL = vL * CONFIG.L.price;
             const costM = vM * CONFIG.M.price;
             const costS = vS * CONFIG.S.price;
@@ -183,26 +181,24 @@
             dom.subM.innerText = '$' + costM.toLocaleString();
             dom.subS.innerText = '$' + costS.toLocaleString();
 
-            // 2. 空間(點數)換算：核心邏輯依據 20/10/5
             const usedCaiByRule = (vL * CONFIG.L.weightCai) + (vM * CONFIG.M.weightCai) + (vS * CONFIG.S.weightCai);
             const totalPrice = costL + costM + costS;
 
             dom.resUsed.innerText = usedCaiByRule;
             dom.resPrice.innerText = '$' + totalPrice.toLocaleString();
 
-            // 3. 規則檢查
+            // 檢查警告
             dom.warn.innerHTML = '';
             let hasError = false;
 
             if (usedCaiByRule > capacity) {
-                addWarn(`⚠️ 空間不足 (按換算比例已超出 ${usedCaiByRule - capacity} 才)`);
+                addWarn(`⚠️ 空間不足 (按換算比例已超出 ${usedCaiByRule - capacity} 材)`);
                 hasError = true;
             }
-            if (vL > CONFIG.L.limit) { addWarn(`🚫 大型箱不可超過 ${CONFIG.L.limit} 個`); hasError = true; }
-            if (vM > CONFIG.M.limit) { addWarn(`🚫 中型箱不可超過 ${CONFIG.M.limit} 個`); hasError = true; }
-            if (vS > CONFIG.S.limit) { addWarn(`🚫 小型箱不可超過 ${CONFIG.S.limit} 個`); hasError = true; }
+            if (vL > CONFIG.L.limit) { addWarn(`🚫 大塑膠箱不可超過 ${CONFIG.L.limit} 個`); hasError = true; }
+            if (vM > CONFIG.M.limit) { addWarn(`🚫 中塑膠箱不可超過 ${CONFIG.M.limit} 個`); hasError = true; }
+            if (vS > CONFIG.S.limit) { addWarn(`🚫 小塑膠箱不可超過 ${CONFIG.S.limit} 個`); hasError = true; }
 
-            // 4. 更新面板外觀狀態
             if (hasError) {
                 dom.panel.className = 'card p-8 border-2 border-red-500 bg-red-50 transition-all shadow-lg';
                 dom.status.innerText = '❌ 超過兌換限制';
@@ -226,8 +222,6 @@
         }
 
         [dom.cap, dom.inL, dom.inM, dom.inS].forEach(el => el.addEventListener('input', calculate));
-        
-        // 頁面加載時執行一次
         calculate();
     </script>
 </body>
