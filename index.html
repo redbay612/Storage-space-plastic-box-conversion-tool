@@ -3,217 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>倉位塑膠箱換算與成本統計</title>
+    <title>收多易塑膠箱領取換算工具</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #f0f2f5; font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; }
-        .card { background: white; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-        .input-group:focus-within { border-color: #3b82f6; ring: 2px; }
+        body { background-color: #f1f5f9; font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; }
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
     <div class="max-w-3xl mx-auto">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-slate-800">📦 倉位箱體換算 & 統計</h1>
-            <p class="text-slate-500 mt-2">自動計算才數上限、實體限制與領取總金額</p>
-        </header>
+        
+        <!-- 1. 設定倉位空間 -->
+        <section class="card p-8 mb-6 border-t-8 border-blue-600">
+            <h2 class="text-xl font-bold text-slate-700 mb-6 flex items-center tracking-tight">1. 設定倉位空間</h2>
+            <div class="relative">
+                <input type="number" id="totalCapacity" value="300" class="w-full p-5 border-2 border-slate-100 rounded-2xl text-4xl font-black text-slate-800 focus:border-blue-500 outline-none transition-all">
+                <span class="absolute right-6 top-6 text-slate-300 text-xl font-bold">才</span>
+            </div>
+            <p class="text-slate-400 text-sm mt-4 font-medium italic">輸入倉位總才數後，系統將按「20才換1大箱 / 10才換1中箱 / 5才換1小箱」比例自動換算上限。</p>
+        </section>
 
-        <!-- 第一步：輸入總才數 -->
-        <div class="card p-6 mb-6">
-            <label class="block text-lg font-semibold mb-2 text-slate-700">1. 設定倉位空間</label>
-            <div class="flex gap-4">
-                <div class="relative flex-1">
-                    <input type="number" id="totalCapacity" value="100" class="w-full p-4 border rounded-xl text-2xl font-bold focus:ring-4 focus:ring-blue-100 outline-none transition-all" placeholder="輸入總才數">
-                    <span class="absolute right-4 top-5 text-gray-400 font-bold">才</span>
-                </div>
+        <!-- 步驟 1: 自動換算上限 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 text-center font-sans">
+            <div class="card p-5 border-l-4 border-blue-500">
+                <div class="text-blue-500 font-bold text-sm">大型箱 (4.5才)</div>
+                <div class="text-[10px] text-slate-400 mb-2 font-bold tracking-widest">單價: $300 | 限制: 15個</div>
+                <div id="autoMaxL" class="text-3xl font-black text-slate-700">-- 個</div>
+                <div class="text-[10px] text-slate-400 mt-2 uppercase font-bold tracking-widest opacity-60">最大領取上限</div>
+            </div>
+            <div class="card p-5 border-l-4 border-green-500">
+                <div class="text-green-500 font-bold text-sm">中型箱 (2.1才)</div>
+                <div class="text-[10px] text-slate-400 mb-2 font-bold tracking-widest">單價: $250 | 限制: 30個</div>
+                <div id="autoMaxM" class="text-3xl font-black text-slate-700">-- 個</div>
+                <div class="text-[10px] text-slate-400 mt-2 uppercase font-bold tracking-widest opacity-60">最大領取上限</div>
+            </div>
+            <div class="card p-5 border-l-4 border-orange-500">
+                <div class="text-orange-500 font-bold text-sm">小型箱 (0.7才)</div>
+                <div class="text-[10px] text-slate-400 mb-2 font-bold tracking-widest">單價: $150 | 限制: 15個</div>
+                <div id="autoMaxS" class="text-3xl font-black text-slate-700">-- 個</div>
+                <div class="text-[10px] text-slate-400 mt-2 uppercase font-bold tracking-widest opacity-60">最大領取上限</div>
             </div>
         </div>
 
-        <!-- 第二步：規則與上限顯示 -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-sm">
-            <div class="card p-4 border-l-4 border-blue-500">
-                <div class="font-bold text-blue-600 mb-1">大型箱 (20才)</div>
-                <div class="text-gray-600">單價：$300</div>
-                <div class="text-gray-600">上限：<span id="maxL" class="font-bold">--</span></div>
-            </div>
-            <div class="card p-4 border-l-4 border-green-500">
-                <div class="font-bold text-green-600 mb-1">中型箱 (10才)</div>
-                <div class="text-gray-600">單價：$250</div>
-                <div class="text-gray-600">上限：<span id="maxM" class="font-bold">--</span></div>
-            </div>
-            <div class="card p-4 border-l-4 border-orange-500">
-                <div class="font-bold text-orange-600 mb-1">小型箱 (5才)</div>
-                <div class="text-gray-600">單價：$150</div>
-                <div class="text-gray-600">上限：<span id="maxS" class="font-bold">--</span></div>
-            </div>
-        </div>
-
-        <!-- 第三步：自定義組合 -->
-        <div class="card p-6 mb-6">
-            <h2 class="text-lg font-semibold mb-6 text-slate-700 border-b pb-2">2. 領取數量統計</h2>
-            
-            <div class="space-y-6">
+        <!-- 2. 自選兌換組合 -->
+        <section class="card p-8 mb-6">
+            <h2 class="text-xl font-bold text-slate-700 mb-8 border-b pb-4 flex items-center tracking-tight">2. 自選兌換組合</h2>
+            <div class="space-y-10">
                 <!-- 大 -->
-                <div class="flex items-center gap-4">
+                <div class="flex items-center justify-between group">
                     <div class="flex-1">
-                        <span class="font-bold block text-blue-700">大型箱 (L)</span>
-                        <span class="text-xs text-gray-400">$300 / 個</span>
+                        <div class="font-bold text-slate-700 text-lg">大型箱 (L)</div>
+                        <div class="text-[10px] text-slate-400 font-mono italic tracking-wide">66x51x38 cm (<span class="text-blue-400 font-bold">4.5才</span>)</div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <input type="number" id="inputL" value="0" min="0" class="w-20 p-2 border rounded-lg text-center font-bold">
-                        <span class="text-gray-400">個</span>
+                    <div class="flex items-center gap-4">
+                        <input type="number" id="inputL" value="0" min="0" class="w-20 p-3 border-2 border-slate-50 rounded-xl text-center font-black text-blue-600 focus:border-blue-400 outline-none transition-all">
+                        <span class="text-slate-300 text-xs font-bold">個</span>
                     </div>
-                    <div class="w-24 text-right font-mono text-slate-600" id="subtotalL">$0</div>
+                    <div id="subL" class="w-20 text-right font-black text-slate-600 text-xl font-mono">$0</div>
                 </div>
+
                 <!-- 中 -->
-                <div class="flex items-center gap-4">
+                <div class="flex items-center justify-between group">
                     <div class="flex-1">
-                        <span class="font-bold block text-green-700">中型箱 (M)</span>
-                        <span class="text-xs text-gray-400">$250 / 個</span>
+                        <div class="font-bold text-slate-700 text-lg">中型箱 (M)</div>
+                        <div class="text-[10px] text-slate-400 font-mono italic tracking-wide">53x38x30 cm (<span class="text-green-400 font-bold">2.1才</span>)</div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <input type="number" id="inputM" value="0" min="0" class="w-20 p-2 border rounded-lg text-center font-bold">
-                        <span class="text-gray-400">個</span>
+                    <div class="flex items-center gap-4">
+                        <input type="number" id="inputM" value="0" min="0" class="w-20 p-3 border-2 border-slate-50 rounded-xl text-center font-black text-green-600 focus:border-green-400 outline-none transition-all">
+                        <span class="text-slate-300 text-xs font-bold">個</span>
                     </div>
-                    <div class="w-24 text-right font-mono text-slate-600" id="subtotalM">$0</div>
+                    <div id="subM" class="w-20 text-right font-black text-slate-600 text-xl font-mono">$0</div>
                 </div>
+
                 <!-- 小 -->
-                <div class="flex items-center gap-4">
+                <div class="flex items-center justify-between group">
                     <div class="flex-1">
-                        <span class="font-bold block text-orange-700">小型箱 (S)</span>
-                        <span class="text-xs text-gray-400">$150 / 個</span>
+                        <div class="font-bold text-slate-700 text-lg">小型箱 (S)</div>
+                        <div class="text-[10px] text-slate-400 font-mono italic tracking-wide">38x26x20 cm (<span class="text-orange-400 font-bold">0.7才</span>)</div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <input type="number" id="inputS" value="0" min="0" class="w-20 p-2 border rounded-lg text-center font-bold">
-                        <span class="text-gray-400">個</span>
+                    <div class="flex items-center gap-4">
+                        <input type="number" id="inputS" value="0" min="0" class="w-20 p-3 border-2 border-slate-50 rounded-xl text-center font-black text-orange-600 focus:border-orange-400 outline-none transition-all">
+                        <span class="text-slate-300 text-xs font-bold">個</span>
                     </div>
-                    <div class="w-24 text-right font-mono text-slate-600" id="subtotalS">$0</div>
+                    <div id="subS" class="w-20 text-right font-black text-slate-600 text-xl font-mono">$0</div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- 結果統計看板 -->
-        <div id="resultCard" class="card p-6 border-2 transition-all duration-300">
-            <div class="grid grid-cols-2 gap-4">
-                <div class="text-center border-r">
-                    <div class="text-sm text-gray-500 uppercase tracking-wider">總消耗才數</div>
-                    <div id="usedCai" class="text-2xl font-black mt-1">0 / 100 才</div>
+        <!-- 總結看板 -->
+        <div id="resPanel" class="card p-8 border-2 transition-all duration-300">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="text-center md:text-left">
+                    <div class="text-[10px] text-slate-400 font-black tracking-widest mb-1 uppercase">總計消耗材積比例</div>
+                    <div class="text-4xl font-black text-slate-800">
+                        <span id="finalUsed">0</span> <span class="text-lg text-slate-300 font-normal">/ <span id="finalMax">300</span> 才</span>
+                    </div>
                 </div>
-                <div class="text-center">
-                    <div class="text-sm text-gray-500 uppercase tracking-wider">應付總金額</div>
-                    <div id="totalPrice" class="text-2xl font-black mt-1 text-blue-600">$0</div>
+                <div class="hidden md:block h-16 w-px bg-slate-100"></div>
+                <div class="text-center md:text-right">
+                    <div class="text-[10px] text-slate-400 font-black tracking-widest mb-1 uppercase">統計總金額</div>
+                    <div id="finalPrice" class="text-5xl font-black text-blue-600 font-mono">$0</div>
                 </div>
             </div>
-            
-            <div id="statusText" class="mt-4 pt-4 border-t text-center font-bold text-lg"></div>
-            <div id="limitWarnings" class="mt-2 space-y-1"></div>
+            <div id="statusLabel" class="mt-8 pt-6 border-t text-center font-bold text-xl"></div>
+            <div id="warnList" class="mt-2 space-y-1 text-center"></div>
         </div>
 
-        <footer class="mt-8 text-xs text-gray-400 leading-relaxed bg-white/50 p-4 rounded-lg">
-            <strong>⚠️ 換算與限制規則：</strong><br>
-            • 大型(20才, $300) | 中型(10才, $250) | 小型(5才, $150)<br>
-            • 單一倉位實體數量上限：大型 15 個、中型 30 個、小型 15 個。<br>
-            • 系統會自動根據「才數空間」與「數量限制」進行雙重檢核。
+        <!-- 3. 換算與限制規則說明 -->
+        <footer class="mt-8 bg-slate-800 text-slate-400 p-8 rounded-3xl text-sm leading-relaxed shadow-xl">
+            <h3 class="text-slate-100 font-bold mb-4 flex items-center tracking-wider text-lg">
+                📋 換算與限制規則說明
+            </h3>
+            <ul class="space-y-3 opacity-90 text-slate-300">
+                <li>• <span class="text-slate-100 font-bold">規格：</span>大型(4.5才, $300) | 中型(2.1才, $250) | 小型(0.7才, $150)</li>
+                <li>• <span class="text-slate-100 font-bold">單一倉位實體數量上限：</span>大型 15 個、中型 30 個、小型 15 個。</li>
+                <li>• <span class="text-slate-100 font-bold">換算比例：</span>1大箱空間 = 2中箱空間 = 4小箱空間</li>
+                <li>• <span class="text-slate-100 font-bold">換算邏輯：</span>步驟 1 顯示單一規格最大值。步驟 2 組合需滿足「總消耗材積比例 ≤ 倉位才數」且「各項不超過數量上限」。</li>
+                <li class="bg-slate-700/50 p-3 rounded-lg border-l-4 border-blue-500 text-slate-200">
+                    <span class="font-bold text-blue-400">空間對應基準：</span><br>
+                    每 <span class="font-black text-white">20材</span> 空間可換 <span class="font-bold text-white">1大箱</span>、
+                    <span class="font-black text-white">10材</span> 可換 <span class="font-bold text-white">1中箱</span>、
+                    <span class="font-black text-white">5材</span> 可換 <span class="font-bold text-white">1小箱</span>
+                </li>
+            </ul>
         </footer>
+
     </div>
 
     <script>
-        const config = {
-            L: { cai: 20, limit: 15, price: 300 },
-            M: { cai: 10, limit: 30, price: 250 },
-            S: { cai: 5, limit: 15, price: 150 }
+        // 設定換算邏輯常數 (空間權重)
+        const CONFIG = {
+            L: { weightCai: 20, limit: 15, price: 300 },
+            M: { weightCai: 10, limit: 30, price: 250 },
+            S: { weightCai: 5,  limit: 15, price: 150 }
         };
 
-        const elements = {
-            totalCapacity: document.getElementById('totalCapacity'),
-            inputL: document.getElementById('inputL'),
-            inputM: document.getElementById('inputM'),
-            inputS: document.getElementById('inputS'),
-            maxL: document.getElementById('maxL'),
-            maxM: document.getElementById('maxM'),
-            maxS: document.getElementById('maxS'),
-            subtotalL: document.getElementById('subtotalL'),
-            subtotalM: document.getElementById('subtotalM'),
-            subtotalS: document.getElementById('subtotalS'),
-            usedCai: document.getElementById('usedCai'),
-            totalPrice: document.getElementById('totalPrice'),
-            resultCard: document.getElementById('resultCard'),
-            statusText: document.getElementById('statusText'),
-            warnings: document.getElementById('limitWarnings')
+        const dom = {
+            cap: document.getElementById('totalCapacity'),
+            autoL: document.getElementById('autoMaxL'),
+            autoM: document.getElementById('autoMaxM'),
+            autoS: document.getElementById('autoMaxS'),
+            inL: document.getElementById('inputL'),
+            inM: document.getElementById('inputM'),
+            inS: document.getElementById('inputS'),
+            subL: document.getElementById('subL'),
+            subM: document.getElementById('subM'),
+            subS: document.getElementById('subS'),
+            resUsed: document.getElementById('finalUsed'),
+            resMax: document.getElementById('finalMax'),
+            resPrice: document.getElementById('finalPrice'),
+            panel: document.getElementById('resPanel'),
+            status: document.getElementById('statusLabel'),
+            warn: document.getElementById('warnList')
         };
 
-        function updateUI() {
-            const totalCaiLimit = parseFloat(elements.totalCapacity.value) || 0;
-            
-            // 1. 計算單項上限顯示
-            elements.maxL.innerText = Math.min(Math.floor(totalCaiLimit / config.L.cai), config.L.limit) + ' 個';
-            elements.maxM.innerText = Math.min(Math.floor(totalCaiLimit / config.M.cai), config.M.limit) + ' 個';
-            elements.maxS.innerText = Math.min(Math.floor(totalCaiLimit / config.S.cai), config.S.limit) + ' 個';
+        function calculate() {
+            const capacity = parseFloat(dom.cap.value) || 0;
+            dom.resMax.innerText = capacity;
 
-            // 2. 獲取目前輸入數值
-            const valL = parseInt(elements.inputL.value) || 0;
-            const valM = parseInt(elements.inputM.value) || 0;
-            const valS = parseInt(elements.inputS.value) || 0;
+            // 步驟 1: 自動換算各項單獨領取之上限
+            // 邏輯：(總才數 / 對應重量空間) 與 (硬性數量限制) 取較小值
+            dom.autoL.innerText = Math.min(Math.floor(capacity / CONFIG.L.weightCai), CONFIG.L.limit) + ' 個';
+            dom.autoM.innerText = Math.min(Math.floor(capacity / CONFIG.M.weightCai), CONFIG.M.limit) + ' 個';
+            dom.autoS.innerText = Math.min(Math.floor(capacity / CONFIG.S.weightCai), CONFIG.S.limit) + ' 個';
 
-            // 3. 計算費用小計
-            const costL = valL * config.L.price;
-            const costM = valM * config.M.price;
-            const costS = valS * config.S.price;
-            elements.subtotalL.innerText = '$' + costL.toLocaleString();
-            elements.subtotalM.innerText = '$' + costM.toLocaleString();
-            elements.subtotalS.innerText = '$' + costS.toLocaleString();
+            // 步驟 2: 混合領取計算
+            const vL = parseInt(dom.inL.value) || 0;
+            const vM = parseInt(dom.inM.value) || 0;
+            const vS = parseInt(dom.inS.value) || 0;
 
-            // 4. 計算總計
-            const usedCai = (valL * config.L.cai) + (valM * config.M.cai) + (valS * config.S.cai);
+            // 1. 金額統計
+            const costL = vL * CONFIG.L.price;
+            const costM = vM * CONFIG.M.price;
+            const costS = vS * CONFIG.S.price;
+            dom.subL.innerText = '$' + costL.toLocaleString();
+            dom.subM.innerText = '$' + costM.toLocaleString();
+            dom.subS.innerText = '$' + costS.toLocaleString();
+
+            // 2. 空間(點數)換算：核心邏輯依據 20/10/5
+            const usedCaiByRule = (vL * CONFIG.L.weightCai) + (vM * CONFIG.M.weightCai) + (vS * CONFIG.S.weightCai);
             const totalPrice = costL + costM + costS;
 
-            elements.usedCai.innerText = `${usedCai} / ${totalCaiLimit} 才`;
-            elements.totalPrice.innerText = '$' + totalPrice.toLocaleString();
+            dom.resUsed.innerText = usedCaiByRule;
+            dom.resPrice.innerText = '$' + totalPrice.toLocaleString();
 
-            // 5. 規則驗證
-            elements.warnings.innerHTML = '';
-            let isOver = usedCai > totalCaiLimit;
-            
-            if (usedCai > totalCaiLimit) addWarning(`才數超標 (超過 ${usedCai - totalCaiLimit} 才)`);
-            if (valL > config.L.limit) { addWarning(`大型箱超過 15 個上限`); isOver = true; }
-            if (valM > config.M.limit) { addWarning(`中型箱超過 30 個上限`); isOver = true; }
-            if (valS > config.S.limit) { addWarning(`小型箱超過 15 個上限`); isOver = true; }
+            // 3. 規則檢查
+            dom.warn.innerHTML = '';
+            let hasError = false;
 
-            // 6. 更新狀態樣式
-            if (isOver) {
-                elements.resultCard.classList.remove('border-transparent', 'bg-green-50');
-                elements.resultCard.classList.add('border-red-500', 'bg-red-50');
-                elements.statusText.innerText = '⚠️ 無法領取：超過限制';
-                elements.statusText.className = 'mt-4 pt-4 border-t text-center font-bold text-lg text-red-600';
-            } else if (usedCai === 0) {
-                elements.resultCard.className = 'card p-6 border-transparent transition-all';
-                elements.statusText.innerText = '請輸入領取數量';
-                elements.statusText.className = 'mt-4 pt-4 border-t text-center font-bold text-lg text-slate-400';
+            if (usedCaiByRule > capacity) {
+                addWarn(`⚠️ 空間不足 (按換算比例已超出 ${usedCaiByRule - capacity} 才)`);
+                hasError = true;
+            }
+            if (vL > CONFIG.L.limit) { addWarn(`🚫 大型箱不可超過 ${CONFIG.L.limit} 個`); hasError = true; }
+            if (vM > CONFIG.M.limit) { addWarn(`🚫 中型箱不可超過 ${CONFIG.M.limit} 個`); hasError = true; }
+            if (vS > CONFIG.S.limit) { addWarn(`🚫 小型箱不可超過 ${CONFIG.S.limit} 個`); hasError = true; }
+
+            // 4. 更新面板外觀狀態
+            if (hasError) {
+                dom.panel.className = 'card p-8 border-2 border-red-500 bg-red-50 transition-all shadow-lg';
+                dom.status.innerText = '❌ 超過兌換限制';
+                dom.status.className = 'mt-8 pt-6 border-t border-red-100 text-center font-bold text-xl text-red-600';
+            } else if (totalPrice === 0) {
+                dom.panel.className = 'card p-8 border-transparent transition-all';
+                dom.status.innerText = '請選擇箱子數量';
+                dom.status.className = 'mt-8 pt-6 border-t border-slate-50 text-center font-bold text-xl text-slate-300';
             } else {
-                elements.resultCard.classList.remove('border-red-500', 'bg-red-50');
-                elements.resultCard.classList.add('border-green-500', 'bg-green-50');
-                elements.statusText.innerText = '✅ 組合正確，准予領取';
-                elements.statusText.className = 'mt-4 pt-4 border-t text-center font-bold text-lg text-green-600';
+                dom.panel.className = 'card p-8 border-2 border-green-500 bg-green-50 transition-all shadow-lg';
+                dom.status.innerText = '✅ 組合正確，符合規定';
+                dom.status.className = 'mt-8 pt-6 border-t border-green-100 text-center font-bold text-xl text-green-600';
             }
         }
 
-        function addWarning(msg) {
+        function addWarn(m) {
             const div = document.createElement('div');
-            div.className = 'text-sm text-red-500 font-semibold text-center';
-            div.innerText = msg;
-            elements.warnings.appendChild(div);
+            div.className = 'text-sm text-red-600 font-black';
+            div.innerText = m;
+            dom.warn.appendChild(div);
         }
 
-        // 監聽所有輸入欄位
-        Object.values(elements).forEach(el => {
-            if(el.tagName === 'INPUT') {
-                el.addEventListener('input', updateUI);
-            }
-        });
-
-        // 初始化
-        updateUI();
+        [dom.cap, dom.inL, dom.inM, dom.inS].forEach(el => el.addEventListener('input', calculate));
+        
+        // 頁面加載時執行一次
+        calculate();
     </script>
 </body>
 </html>
